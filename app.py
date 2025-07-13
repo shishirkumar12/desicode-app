@@ -4,49 +4,80 @@ from desicode_interpreter import run_desicode
 # Set page config
 st.set_page_config(page_title="DesiCode 🧠", page_icon="🌶️", layout="wide")
 
-# Custom CSS for color theme
-st.markdown("""
-    <style>
-        body {
-            background-color: #fff8f0;
-        }
-        .stApp {
-            background-color: #fff8f0;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        .block-container {
-            padding: 2rem;
-            background-color: #fff8f0;
-        }
-        h1 {
-            color: #d62828;
-        }
-        .stTextArea textarea {
-            background-color: #fff;
-            color: #000;
-            font-size: 16px;
-            border-radius: 8px;
-        }
-        .stCodeBlock pre {
-            background-color: #1e1e1e;
-            color: #f8f8f2;
-            font-family: 'Courier New', monospace;
-            padding: 1rem;
-            border-radius: 10px;
-        }
-        .stButton button {
-            background-color: #f77f00;
-            color: white;
-            font-weight: bold;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-        }
-        .stButton button:hover {
-            background-color: #d62828;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# Light/Dark theme toggle
+mode = st.sidebar.selectbox("🎨 Select Theme Mode", ["Light", "Dark"])
+
+# Custom CSS for themes
+if mode == "Light":
+    st.markdown("""
+        <style>
+            body, .stApp, .block-container {
+                background-color: #fff8f0;
+                font-family: 'Segoe UI', sans-serif;
+            }
+            h1 { color: #d62828; }
+            .stTextArea textarea {
+                background-color: #fff;
+                color: #000;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+            .stCodeBlock pre {
+                background-color: #1e1e1e;
+                color: #f8f8f2;
+                font-family: 'Courier New', monospace;
+                padding: 1rem;
+                border-radius: 10px;
+            }
+            .stButton button {
+                background-color: #f77f00;
+                color: white;
+                font-weight: bold;
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: none;
+            }
+            .stButton button:hover {
+                background-color: #d62828;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+            body, .stApp, .block-container {
+                background-color: #121212;
+                font-family: 'Segoe UI', sans-serif;
+                color: #e0e0e0;
+            }
+            h1 { color: #fcbf49; }
+            .stTextArea textarea {
+                background-color: #1e1e1e;
+                color: #e0e0e0;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+            .stCodeBlock pre {
+                background-color: #000000;
+                color: #39ff14;
+                font-family: 'Courier New', monospace;
+                padding: 1rem;
+                border-radius: 10px;
+            }
+            .stButton button {
+                background-color: #fcbf49;
+                color: black;
+                font-weight: bold;
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: none;
+            }
+            .stButton button:hover {
+                background-color: #d62828;
+                color: white;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
 # Title Section
 st.markdown("""
@@ -96,6 +127,7 @@ st.markdown("""
     | Try commands like <code>bol</code>, <code>rakh</code>, <code>jod</code>, <code>kaam karle</code> and more!
 </p>
 """, unsafe_allow_html=True)
+
 
 
 
