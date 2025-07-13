@@ -25,7 +25,7 @@ with tab1:
     if st.button("🔥 Run Code"):
         result = run_desicode(user_code)
         st.subheader("🖨️ Output:")
-        st.code(result)
+        st.text(result)
 
 with tab2:
     st.markdown("### DesiCode vs Python – Learn Instantly 👇")
