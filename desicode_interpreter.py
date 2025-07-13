@@ -12,6 +12,7 @@ def run_desicode(code, external_vars=None):
             i += 1
             continue
 
+        # 🗣️ Print
         if line.startswith("bol "):
             value = line[4:].strip()
             if value.startswith('"') and value.endswith('"'):
@@ -21,6 +22,7 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append(f"Error: '{value}' not found")
 
+        # 📦 Variable
         elif line.startswith("rakh "):
             parts = line.split(" ", 2)
             if len(parts) == 3:
@@ -32,6 +34,7 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append("Syntax Error in 'rakh'.")
 
+        # 🔁 Loop
         elif line.startswith("repeat "):
             parts = line.split(" ", 2)
             if len(parts) == 3 and parts[1].isdigit():
@@ -42,6 +45,7 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append("Syntax Error in 'repeat'.")
 
+        # ❓ Condition
         elif line.startswith("agar "):
             if "barabar" in line and "toh" in line:
                 try:
@@ -54,6 +58,7 @@ def run_desicode(code, external_vars=None):
                 except:
                     output.append("Syntax Error in 'agar'.")
 
+        # ➕➖✖️➗ Math operations
         elif any(line.startswith(op) for op in ["jod", "ghata", "guna", "bhaag"]):
             cmd, a, b = line.split()
             try:
@@ -62,21 +67,20 @@ def run_desicode(code, external_vars=None):
                 elif cmd == "ghata": result = a - b
                 elif cmd == "guna": result = a * b
                 elif cmd == "bhaag":
-                    if b == 0:
-                        result = "Math Error: Zero se bhaag nahi hota."
-                    else:
-                        result = a / b
+                    result = a / b if b != 0 else "Math Error: Zero se bhaag nahi hota."
                 if isinstance(result, float) and not isinstance(result, str):
                     result = int(result) if result.is_integer() else result
                 output.append(str(result))
             except:
                 output.append(f"Syntax Error in '{cmd}'.")
 
+        # 🧑‍💻 Input
         elif line.startswith("pucho "):
             var = line.split()[1]
             val = input(f"{var}: ")
             variables[var] = val
 
+        # 🧱 Function definition
         elif line.startswith("kaam karle "):
             func_name = line.split(" ")[2]
             func_body = []
@@ -84,8 +88,9 @@ def run_desicode(code, external_vars=None):
             while i < len(lines) and not lines[i].strip().startswith("khatam"):
                 func_body.append(lines[i])
                 i += 1
-            functions[func_name] = "\n".join(func_body)
+            functions[func_name] = '\n'.join(func_body)
 
+        # 🔁 Function call
         elif line in functions:
             result = run_desicode(functions[line], variables)
             output.append(result)
@@ -96,5 +101,6 @@ def run_desicode(code, external_vars=None):
         i += 1
 
     return "\n".join([o for o in output if o])
+
 
 
