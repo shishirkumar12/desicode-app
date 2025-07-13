@@ -2,7 +2,7 @@ import streamlit as st
 from desicode_interpreter import run_desicode
 
 # Set page config
-st.set_page_config(page_title="DesiCode 🧠", page_icon="🌶️", layout="wide")
+st.set_page_config(page_title="DesiLang 🧠", page_icon="🌶️", layout="wide")
 
 # Light/Dark theme toggle
 mode = st.sidebar.selectbox("🎨 Select Theme Mode", ["Light", "Dark"])
@@ -81,7 +81,7 @@ else:
 
 # Title Section
 st.markdown("""
-    <h1 style='text-align: center; font-size: 50px;'>🌶️ DesiCode – Desi Style Coding Language</h1>
+    <h1 style='text-align: center; font-size: 50px;'> DesiLang – Desi Style Coding Language</h1>
     <p style='text-align: center;'>Apni bhaasha mein coding karo, mazaak-mazaak mein programming seekho! 🇮🇳</p>
 """, unsafe_allow_html=True)
 
