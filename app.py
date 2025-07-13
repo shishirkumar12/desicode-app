@@ -1,67 +1,102 @@
 import streamlit as st
 from desicode_interpreter import run_desicode
 
-# Streamlit page settings
-st.set_page_config(page_title="DesiCode 🧠", page_icon="🌶️", layout="centered")
+# Set page config
+st.set_page_config(page_title="DesiCode 🧠", page_icon="🌶️", layout="wide")
 
-# Header
-st.markdown("<h1 style='text-align: center;'>💻🎉 DesiCode – Apni Desi Programming Language 🎉💻</h1>", unsafe_allow_html=True)
-st.markdown("### 🧠 Learn coding in a desi style with `bol`, `rakh`, `jod`, `guna`, `kaam karle`, `rakh a = 10`, and more!", unsafe_allow_html=True)
-st.warning("⚠️ Works best on laptop/desktop browsers.")
+# Custom CSS for color theme
+st.markdown("""
+    <style>
+        body {
+            background-color: #fff8f0;
+        }
+        .stApp {
+            background-color: #fff8f0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .block-container {
+            padding: 2rem;
+            background-color: #fff8f0;
+        }
+        h1 {
+            color: #d62828;
+        }
+        .stTextArea textarea {
+            background-color: #fff;
+            color: #000;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+        .stCodeBlock pre {
+            background-color: #1e1e1e;
+            color: #f8f8f2;
+            font-family: 'Courier New', monospace;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        .stButton button {
+            background-color: #f77f00;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+        }
+        .stButton button:hover {
+            background-color: #d62828;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Title Section
+st.markdown("""
+    <h1 style='text-align: center; font-size: 50px;'>🌶️ DesiCode – Desi Style Coding Language</h1>
+    <p style='text-align: center;'>Apni bhaasha mein coding karo, mazaak-mazaak mein programming seekho! 🇮🇳</p>
+""", unsafe_allow_html=True)
+
+st.divider()
+
+# Layout columns
+left, right = st.columns([2, 1])
 
 # Example programs
 examples = {
     "👋 Namaste Duniya": 'bol "Namaste Duniya!"',
     "📦 Naam Print": 'rakh naam = "Shishir"\nbol "Mera naam hai:"\nbol naam',
-    "🔁 Repeat 3 Times": 'repeat 3 bol "Coding is fun!"',
-    "🧠 Condition Example": 'rakh naam = "Shishir"\nagar naam barabar "Shishir" toh bol "Sahi pakde hain!"',
-    "➕➖ Math Example": 'rakh a = 10\nrakh b = 5\nrakh total jod a b\nbol total',
-    "🧑‍💻 Function Example": 'kaam karle intro\nbol "Namaste Duniya!"\nrakh naam = "Shishir"\nbol naam\nkhatam\n\nintro',
-    "🧾 Multiline Print": 'bol "Namaste Duniya!"\nbol "Mera naam hai:\\nShishir\\nAur main DesiCoder hoon!"'
+    "🔁 Repeat": 'repeat 3 bol "Coding is fun!"',
+    "➕ Math": 'rakh a = 10\nrakh b = 5\nrakh total jod a b\nbol total',
+    "🤔 Condition": 'rakh naam = "Shishir"\nagar naam barabar "Shishir" toh bol "Sahi pakde hain!"',
+    "🧾 Multiline": 'bol "Line 1\\nLine 2\\nLine 3"'
 }
 
-# Tabs: Editor + Python Comparison
-tab1, tab2 = st.tabs(["📝 DesiCode Editor", "🐍 Python Equivalent"])
+# Left side: Code input
+with left:
+    st.subheader("✍️ Likho apna DesiCode")
+    example_choice = st.selectbox("📂 Choose Example Code:", list(examples.keys()))
+    default_code = examples[example_choice]
+    user_code = st.text_area("DesiCode Editor:", value=default_code, height=300)
+    user_code = user_code.encode('utf-8').decode('unicode_escape')
+    run = st.button("🔥 Run Code", use_container_width=True)
 
-# Editor tab
-with tab1:
-    selected_example = st.selectbox("📂 Choose Example Code:", list(examples.keys()))
-    raw_code = st.text_area("✍️ Likho apna DesiCode yahan:", examples[selected_example], height=250)
-    user_code = raw_code.encode('utf-8').decode('unicode_escape')  # 🔥 Key fix for decoding \\n properly
-
-    if st.button("🔥 Run Code"):
+# Right side: Output display
+with right:
+    st.subheader("🖨️ Output Console")
+    if run:
         result = run_desicode(user_code)
-        st.subheader("🖨️ Output:")
-        st.markdown(f"```\n{result}\n```")  # This renders true multiline output!
+        st.code(result, language='text')
+    else:
+        st.info("Code ka output yahan dikhega!")
 
-# Python Comparison tab
-with tab2:
-    st.markdown("### DesiCode vs Python – Learn Instantly 👇")
-    st.markdown("""
-| DesiCode                                   | Python Equivalent                    |
-|--------------------------------------------|---------------------------------------|
-| bol "Hello"                                | print("Hello")                        |
-| rakh naam = "Shishir"                      | naam = "Shishir"                      |
-| agar naam barabar "Shishir" toh bol "Hi"   | if naam == "Shishir": print("Hi")    |
-| repeat 3 bol "Hi"                          | for i in range(3): print("Hi")        |
-| jod a b                                    | a + b                                 |
-| rakh total jod a b                         | total = a + b                         |
-| kaam karle intro ... khatam                | def intro(): ...                      |
-| intro                                      | intro()                               |
-| bol "Line1\\nLine2"                        | print("Line1\\nLine2")                |
-    """)
-
-# Feedback
-st.markdown("---")
-st.markdown("### 💬 Kaisa laga aapko DesiCode?")
-feedback = st.text_input("Aapka feedback (chhota ya bada, dono chalega!)")
-if st.button("📤 Submit Feedback"):
-    st.success("Shukriya! Aapka feedback record ho gaya hai 😄")
+st.divider()
 
 # Footer
-st.markdown("---")
-st.markdown("Made with ❤️ by [Shishir Kumar](https://github.com/shishirkumar12)")
-st.markdown("⭐ Try more examples using `bol`, `rakh`, `agar`, `repeat`, `kaam karle`, and math-style assignments!")
+st.markdown("""
+<p style='text-align: center;'>
+    Made with ❤️ by <a href='https://github.com/shishirkumar12' target='_blank'>Shishir Kumar</a>  
+    | Try commands like <code>bol</code>, <code>rakh</code>, <code>jod</code>, <code>kaam karle</code> and more!
+</p>
+""", unsafe_allow_html=True)
+
 
 
 
