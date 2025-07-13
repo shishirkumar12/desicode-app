@@ -31,7 +31,7 @@ with tab1:
     if st.button("🔥 Run Code"):
         result = run_desicode(user_code)
         st.subheader("🖨️ Output:")
-        st.text(result)  # This prints multiline output properly
+        st.markdown(f"```\n{result}\n```")  # This prints multiline output properly
 
 # Comparison tab
 with tab2:
