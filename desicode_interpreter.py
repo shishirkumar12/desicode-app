@@ -1,3 +1,5 @@
+import codecs  # for decoding escape characters like \n
+
 def run_desicode(code, external_vars=None):
     output = []
     variables = external_vars if external_vars is not None else {}
@@ -12,12 +14,12 @@ def run_desicode(code, external_vars=None):
             i += 1
             continue
 
-        # 🗣️ Print (handles \n)
+        # 🗣️ bol - print with proper newline decoding
         if line.startswith("bol "):
             value = line[4:].strip()
             if value.startswith('"') and value.endswith('"'):
                 try:
-                    decoded = bytes(value[1:-1], "utf-8").decode("unicode_escape")
+                    decoded = codecs.decode(value[1:-1], 'unicode_escape')
                     output.append(decoded)
                 except Exception:
                     output.append(value[1:-1])
@@ -26,7 +28,7 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append(f"Error: '{value}' not found")
 
-        # 📦 Variable assignment
+        # 📦 Variable assignment (rakh)
         elif line.startswith("rakh "):
             parts = line.split()
             if len(parts) == 4 and parts[2] == "=":
@@ -63,7 +65,7 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append("Syntax Error in 'rakh'.")
 
-        # 🔁 Repeat
+        # 🔁 repeat
         elif line.startswith("repeat "):
             parts = line.split(" ", 2)
             if len(parts) == 3 and parts[1].isdigit():
@@ -74,7 +76,7 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append("Syntax Error in 'repeat'.")
 
-        # ❓ Conditional
+        # ❓ agar condition
         elif line.startswith("agar ") and "barabar" in line and "toh" in line:
             try:
                 cond, action = line.split("toh", 1)
@@ -86,7 +88,7 @@ def run_desicode(code, external_vars=None):
             except:
                 output.append("Syntax Error in 'agar'.")
 
-        # ➕➖✖️➗ Direct math (print only)
+        # ➕➖✖️➗ direct math print
         elif any(line.startswith(op) for op in ["jod", "ghata", "guna", "bhaag"]):
             parts = line.split()
             if len(parts) == 3:
@@ -108,13 +110,13 @@ def run_desicode(code, external_vars=None):
                 except:
                     output.append(f"Syntax Error in '{cmd}'.")
 
-        # 🧑‍💻 Input
+        # 🧑‍💻 input
         elif line.startswith("pucho "):
             var = line.split()[1]
             val = input(f"{var}: ")
             variables[var] = val
 
-        # 🧱 Function definition
+        # 🧱 Function block
         elif line.startswith("kaam karle "):
             func_name = line.split(" ")[2]
             func_body = []
