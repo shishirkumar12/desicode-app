@@ -16,7 +16,7 @@ def run_desicode(code, external_vars=None):
         if line.startswith("bol "):
             value = line[4:].strip()
             if value.startswith('"') and value.endswith('"'):
-                output.append(value[1:-1])
+                output.append(value[1:-1].encode().decode('unicode_escape'))
             elif value in variables:
                 output.append(str(variables[value]))
             else:
