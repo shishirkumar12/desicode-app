@@ -22,19 +22,49 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append(f"Error: '{value}' not found")
 
-        # 📦 Variable
+        # 📦 Variable assignment (rakh a = 10) or expression (rakh c jod a b)
         elif line.startswith("rakh "):
-            parts = line.split(" ", 2)
-            if len(parts) == 3:
+            parts = line.split()
+            # Case: rakh a = 10
+            if len(parts) == 4 and parts[2] == "=":
+                var = parts[1]
+                val = parts[3].strip('"')
+                if val.replace('.', '', 1).isdigit():
+                    val = float(val)
+                    val = int(val) if val.is_integer() else val
+                variables[var] = val
+
+            # Case: rakh a 10
+            elif len(parts) == 3:
                 var, val = parts[1], parts[2].strip('"')
                 if val.replace('.', '', 1).isdigit():
                     val = float(val)
                     val = int(val) if val.is_integer() else val
                 variables[var] = val
+
+            # Case: rakh c jod a b
+            elif len(parts) == 5 and parts[2] in ["jod", "ghata", "guna", "bhaag"]:
+                var, op, a, b = parts[1], parts[2], parts[3], parts[4]
+                try:
+                    a_val = float(variables.get(a, a))
+                    b_val = float(variables.get(b, b))
+                    if op == "jod":
+                        result = a_val + b_val
+                    elif op == "ghata":
+                        result = a_val - b_val
+                    elif op == "guna":
+                        result = a_val * b_val
+                    elif op == "bhaag":
+                        result = a_val / b_val if b_val != 0 else "Math Error: Zero se bhaag nahi hota."
+                    if isinstance(result, float) and not isinstance(result, str):
+                        result = int(result) if result.is_integer() else result
+                    variables[var] = result
+                except:
+                    output.append(f"Math error in '{op}' expression.")
             else:
                 output.append("Syntax Error in 'rakh'.")
 
-        # 🔁 Loop
+        # 🔁 Repeat
         elif line.startswith("repeat "):
             parts = line.split(" ", 2)
             if len(parts) == 3 and parts[1].isdigit():
@@ -46,33 +76,38 @@ def run_desicode(code, external_vars=None):
                 output.append("Syntax Error in 'repeat'.")
 
         # ❓ Condition
-        elif line.startswith("agar "):
-            if "barabar" in line and "toh" in line:
-                try:
-                    cond, action = line.split("toh", 1)
-                    _, var, _, val = cond.strip().split()
-                    val = val.strip('"')
-                    if str(variables.get(var, "")) == val:
-                        inner = run_desicode(action.strip(), variables)
-                        output.append(inner)
-                except:
-                    output.append("Syntax Error in 'agar'.")
-
-        # ➕➖✖️➗ Math operations
-        elif any(line.startswith(op) for op in ["jod", "ghata", "guna", "bhaag"]):
-            cmd, a, b = line.split()
+        elif line.startswith("agar ") and "barabar" in line and "toh" in line:
             try:
-                a, b = float(a), float(b)
-                if cmd == "jod": result = a + b
-                elif cmd == "ghata": result = a - b
-                elif cmd == "guna": result = a * b
-                elif cmd == "bhaag":
-                    result = a / b if b != 0 else "Math Error: Zero se bhaag nahi hota."
-                if isinstance(result, float) and not isinstance(result, str):
-                    result = int(result) if result.is_integer() else result
-                output.append(str(result))
+                cond, action = line.split("toh", 1)
+                _, var, _, val = cond.strip().split()
+                val = val.strip('"')
+                if str(variables.get(var, "")) == val:
+                    inner = run_desicode(action.strip(), variables)
+                    output.append(inner)
             except:
-                output.append(f"Syntax Error in '{cmd}'.")
+                output.append("Syntax Error in 'agar'.")
+
+        # ➕➖✖️➗ Direct math (print only)
+        elif any(line.startswith(op) for op in ["jod", "ghata", "guna", "bhaag"]):
+            parts = line.split()
+            if len(parts) == 3:
+                cmd, a, b = parts
+                try:
+                    a_val = float(variables.get(a, a))
+                    b_val = float(variables.get(b, b))
+                    if cmd == "jod":
+                        result = a_val + b_val
+                    elif cmd == "ghata":
+                        result = a_val - b_val
+                    elif cmd == "guna":
+                        result = a_val * b_val
+                    elif cmd == "bhaag":
+                        result = a_val / b_val if b_val != 0 else "Math Error: Zero se bhaag nahi hota."
+                    if isinstance(result, float) and not isinstance(result, str):
+                        result = int(result) if result.is_integer() else result
+                    output.append(str(result))
+                except:
+                    output.append(f"Syntax Error in '{cmd}'.")
 
         # 🧑‍💻 Input
         elif line.startswith("pucho "):
@@ -100,7 +135,8 @@ def run_desicode(code, external_vars=None):
 
         i += 1
 
-    return "\n".join([o for o in output if o])
+    return '\n'.join([o for o in output if o])
+
 
 
 
