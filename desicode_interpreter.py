@@ -12,20 +12,23 @@ def run_desicode(code, external_vars=None):
             i += 1
             continue
 
-        # 🗣️ Print
+        # 🗣️ Print (handles \n)
         if line.startswith("bol "):
             value = line[4:].strip()
             if value.startswith('"') and value.endswith('"'):
-                output.append(value[1:-1].encode().decode('unicode_escape'))
+                try:
+                    decoded = bytes(value[1:-1], "utf-8").decode("unicode_escape")
+                    output.append(decoded)
+                except Exception:
+                    output.append(value[1:-1])
             elif value in variables:
                 output.append(str(variables[value]))
             else:
                 output.append(f"Error: '{value}' not found")
 
-        # 📦 Variable assignment (rakh a = 10) or expression (rakh c jod a b)
+        # 📦 Variable assignment
         elif line.startswith("rakh "):
             parts = line.split()
-            # Case: rakh a = 10
             if len(parts) == 4 and parts[2] == "=":
                 var = parts[1]
                 val = parts[3].strip('"')
@@ -33,16 +36,12 @@ def run_desicode(code, external_vars=None):
                     val = float(val)
                     val = int(val) if val.is_integer() else val
                 variables[var] = val
-
-            # Case: rakh a 10
             elif len(parts) == 3:
                 var, val = parts[1], parts[2].strip('"')
                 if val.replace('.', '', 1).isdigit():
                     val = float(val)
                     val = int(val) if val.is_integer() else val
                 variables[var] = val
-
-            # Case: rakh c jod a b
             elif len(parts) == 5 and parts[2] in ["jod", "ghata", "guna", "bhaag"]:
                 var, op, a, b = parts[1], parts[2], parts[3], parts[4]
                 try:
@@ -75,7 +74,7 @@ def run_desicode(code, external_vars=None):
             else:
                 output.append("Syntax Error in 'repeat'.")
 
-        # ❓ Condition
+        # ❓ Conditional
         elif line.startswith("agar ") and "barabar" in line and "toh" in line:
             try:
                 cond, action = line.split("toh", 1)
@@ -134,6 +133,9 @@ def run_desicode(code, external_vars=None):
             output.append("Unknown command: " + line)
 
         i += 1
+
+    return '\n'.join([o for o in output if o])
+
 
     return '\n'.join([o for o in output if o])
 
